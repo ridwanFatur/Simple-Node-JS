@@ -61,6 +61,5 @@ jobs:
         script: |
           cd /home/ridwanFatur/simple_nodejs
           npm install
-          npm run start
     - name: Deployment Status
       run: echo "Deployment completed successfully!"
