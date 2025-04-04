@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  SERVER_HOST: 103.193.178.16
+  SERVER_USER: ridwanFatur
+  APP_PATH: /home/ridwanFatur/simple_nodejs
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -29,37 +34,29 @@ jobs:
     - name: Create .env file
       run: |
         echo "PORT=3000" > .env
+
     - name: Setup SSH Key
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 103.59.95.208 >> ~/.ssh/known_hosts
-    - name: Deploy to Server via SSH
-      uses: appleboy/ssh-action@master
+        ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
       with:
-        host: 103.59.95.208
-        username: ridwanFatur
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          mkdir -p /home/ridwanFatur/simple_nodejs
-          rm -rf /home/ridwanFatur/simple_nodejs/*
-          mkdir -p /home/ridwanFatur/simple_nodejs/dist			
-    - name: Copy dist folder to server
-      run: |
-        scp -r ./dist/* ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/dist/
-        scp .env ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/
-        scp package.json ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/
-    - name: Install dependencies and start app on server
-      uses: appleboy/ssh-action@master
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
       with:
-        host: 103.59.95.208
-        username: ridwanFatur
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          cd /home/ridwanFatur/simple_nodejs
-          npm install
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simple-node-js:1.0		
+
     - name: Deployment Status
       run: echo "Deployment completed successfully!"

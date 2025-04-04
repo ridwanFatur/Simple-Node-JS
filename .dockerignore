@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Distribution directory
+dist/
+
+# Environment files
+.env
+.env.*
+
+# Git and GitHub files
+.git/
+.github/
+.gitignore
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test files
+coverage/
+*.test.ts
+*.spec.ts
+
+# Other
+README.md
+LICENSE
+*.log
