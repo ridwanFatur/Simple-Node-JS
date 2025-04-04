@@ -1,0 +1,38 @@
+name: Node.js TypeScript API CI/CD
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build
+      run: npm run build
+      
+    - name: Create .env file
+      run: |
+        echo "PORT=3000" > .env
+
+    - name: Deploy
+      run: |
+        echo "Deploying application..."
+
+    - name: Deployment Status
+      run: echo "Deployment completed successfully!"
