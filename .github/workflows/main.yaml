@@ -44,10 +44,11 @@ jobs:
         port: 22
         script: |
           mkdir -p /home/ridwanFatur/simple_nodejs
-          rm -rf /home/ridwanFatur/simple_nodejs/*				
+          rm -rf /home/ridwanFatur/simple_nodejs/*
+          mkdir -p /home/ridwanFatur/simple_nodejs/dist			
     - name: Copy dist folder to server
       run: |
-        scp -r ./dist/* ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/
+        scp -r ./dist/* ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/dist/
         scp .env ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/
         scp package.json ridwanFatur@103.59.95.208:/home/ridwanFatur/simple_nodejs/
     - name: Install dependencies and start app on server
