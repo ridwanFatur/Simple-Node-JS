@@ -29,7 +29,12 @@ jobs:
     - name: Create .env file
       run: |
         echo "PORT=3000" > .env
-
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 103.59.95.208 >> ~/.ssh/known_hosts
     - name: Deploy to Server via SSH
       uses: appleboy/ssh-action@master
       with:
