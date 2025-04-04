@@ -30,9 +30,16 @@ jobs:
       run: |
         echo "PORT=3000" > .env
 
-    - name: Deploy
-      run: |
-        echo "Deploying application..."
+    - name: Deploy to Server via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: 103.59.95.208
+        username: ridwanFatur
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          mkdir -p /home/ridwanFatur/simple_nodejs
+          rm -rf /home/ridwanFatur/simple_nodejs/*				
 
     - name: Deployment Status
       run: echo "Deployment completed successfully!"
