@@ -38,7 +38,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKER_REPO }}
+          tags: ridwanfatur/simple-node-js:1.0
 	
       - name: Setup SSH Key
         run: |
