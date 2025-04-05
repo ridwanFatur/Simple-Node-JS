@@ -9,7 +9,8 @@ on:
 env:
   SERVER_HOST: 103.193.178.16
   SERVER_USER: ridwanFatur
-  APP_PATH: /home/ridwanFatur/simple_nodejs
+  APP_PATH: /home/ridwanFatur/simple-node-js
+  DOCKER_REPO: ridwanfatur/simple-node-js:1.0
 
 jobs:
   deploy:
@@ -22,13 +23,6 @@ jobs:
     - name: Create .env file
       run: |
         echo "PORT=3000" > .env
-
-    - name: Setup SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -44,7 +38,27 @@ jobs:
       with:
         context: .
         push: true
-        tags: ridwanfatur/simple-node-js:1.0		
+        tags: ${{ env.DOCKER_REPO }}
+	
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Update Docker on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SERVER_HOST }}
+        username: ${{ env.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd ${{ env.APP_PATH }}
+          docker-compose down
+          docker pull ${{ env.DOCKER_REPO }}
+          docker-compose up -d		
 
     - name: Deployment Status
       run: echo "Deployment completed successfully!"
