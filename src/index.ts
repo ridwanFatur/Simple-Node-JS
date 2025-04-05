@@ -14,7 +14,7 @@ app.use('/api', apiRoutes);
 // Base route
 app.get('/', (req, res) => {
   res.json({
-    message: 'TypeScript Node.js API is running (Test Ridwan)',
+    message: 'TypeScript Node.js API is running (Test Ridwan - Update 1)',
     endpoints: {
       getItems: 'GET /api/items',
       getItemById: 'GET /api/items/:id',
